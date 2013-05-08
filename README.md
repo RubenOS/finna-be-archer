@@ -1,10 +1,4 @@
-pruba de edicion de archivo para generar nuestro codigo
-
-
-
 Proyecto de estructuras
-
-===============
 ===============
 - Pide contraseña
 - Lee archivo
@@ -12,3 +6,4 @@ Proyecto de estructuras
 - ???
 - Profit
 - hola...
+- pruba de edicion de archivo para generar nuestro codigo
