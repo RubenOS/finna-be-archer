@@ -5,3 +5,5 @@ Proyecto de estructuras
 - Codifica/Decodifica archivo
 - ???
 - Profit
+- hola...
+- pruba de edicion de archivo para generar nuestro codigo
