@@ -1,7 +1,8 @@
 DESP macro A
-	mov ah,02h
-	mov dl,A
+	lea dx,A
+	mov ah,09h
 	int 21h
 endm
 CONV macro A
+	
 endm
