@@ -1,1 +1,6 @@
- 
+DESP macro A
+	mov ah,02h
+	mov dl,A
+	int 21h
+endm
+CONV macro A
