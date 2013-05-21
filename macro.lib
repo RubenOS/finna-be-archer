@@ -19,6 +19,32 @@ LEE macro
 		jmp leer
 endm
 
+CODIF macro
+	cifrar1 db 'cifrar $' 
+	decifrar1 db 'decifrar $'
+	lee:
+		mov al,es:[8Ah]
+		cmp al,'d'
+		je decifrar
+		cmp al,'c'
+		je cifrar
+		cmp al,'D'
+		je decifrar
+		cmp al,'C'
+		je cifrar
+		jmp fin
+	cifrar:
+		lea dx,cifrar1
+		mov ah,9h
+		int 21h
+		jmp fin
+	decifrar:
+		lea dx,decifrar1
+		mov ah,9h
+		int 21h
+		jmp fin
+
+
 CONVMAY macro A
 
 endm
