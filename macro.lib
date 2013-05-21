@@ -3,15 +3,34 @@ DESP macro A
 	mov ah,09h
 	int 21h
 endm
+
+LEE macro
+	mov bl,es:[80h]
+		mov si,82h
+		mov di,0
+	leer:
+		CMP CONTRA[di],'$'
+		JE win 
+		mov al,es:[si]
+		cmp al,CONTRA[di]
+		jne fail
+		inc si
+		inc di
+		jmp leer
+endm
+
 CONVMAY macro A
-	
+
 endm
+
 CONVMIN macro A
-	
+
 endm
+
 CONVNUM macro A
-	
+
 endm
+
 CONVESP macro A
-	
+
 endm
