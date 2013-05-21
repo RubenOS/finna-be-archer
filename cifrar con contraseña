@@ -1,0 +1,59 @@
+.model small 
+.data
+	cifrar1 db 'cifrar $' 
+	decifrar1 db 'decifrar $'
+	fail1 db 'error $' 
+	win1 db 'contraseña correcta $'
+	CONTRA db 'PELUCAS$'
+.stack
+.code
+	inicio:
+		mov ax,@data
+		mov ds,ax
+		mov bl,es:[80h]
+		mov si,82h
+		mov di,0
+	lee:
+		CMP CONTRA[di],'$'
+		JE win 
+		mov al,es:[si]
+		cmp al,CONTRA[di]
+		jne fail
+		inc si
+		inc di
+		jmp lee
+	fail:
+		lea dx,fail1
+		mov ah,9h
+		int 21h
+		jmp fin
+	win:
+		lea dx,win1
+		mov ah,9h
+		int 21h
+		mov al,es:[8Ah]
+		cmp al,'d'
+		je decifrar
+		cmp al,'c'
+		je cifrar
+		cmp al,'D'
+		je decifrar
+		cmp al,'C'
+		je cifrar
+		jmp fin	
+		
+		cifrar:
+			lea dx,cifrar1
+			mov ah,9h
+			int 21h
+			jmp fin
+		decifrar:
+			lea dx,decifrar1
+			mov ah,9h
+			int 21h
+			jmp fin
+	fin:
+		mov ah,4ch
+		int 21h
+	
+	end inicio
