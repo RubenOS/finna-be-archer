@@ -1,3 +1,4 @@
+include macro.lib
 .model small 
 .data
   nomvar db ?
@@ -9,27 +10,12 @@
 	inicio:
 		mov ax,@data
 		mov ds,ax
-		mov bl,es:[80h]
-		mov si,82h
-		mov di,0
-	lee:
-		CMP CONTRA[di],'$'
-		JE win 
-		mov al,es:[si]
-		cmp al,CONTRA[di]
-		jne fail
-		inc si
-		inc di
-		jmp lee
+		LEE	;llama macro para leer la contraseña que recibe como argumento
 	fail:
-		lea dx,fail1
-		mov ah,9h
-		int 21h
+		desp fail1 ;desp recibe una variable dw y la escribe en pantalla
 		jmp fin
 	win:
-		lea dx,win1
-		mov ah,9h
-		int 21h
+		desp win1
 		jmp fin
 	fin:
 		mov ah,4ch
