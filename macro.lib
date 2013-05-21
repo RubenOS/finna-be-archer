@@ -3,6 +3,15 @@ DESP macro A
 	mov ah,09h
 	int 21h
 endm
-CONV macro A
+CONVMAY macro A
+	
+endm
+CONVMIN macro A
+	
+endm
+CONVNUM macro A
+	
+endm
+CONVESP macro A
 	
 endm
