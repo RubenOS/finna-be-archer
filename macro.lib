@@ -62,9 +62,26 @@ SWITCH macro
 	je CO2 ;decodifica
 	jmp finswitch
 	CO1:
+		CMP cara,0FFH  ;CARACTER 255
+        	JE RESTA
+        	CMP cara,0FEH      ;254
+        	JE RESTA
+        	CMP cara,0FDH        ;253
+        	JE RESTA
+        	ADD cara,3H
+		RESTA:
+			SBB cara,223D   
 		jmp finswitch
 	CO2:
-	
+		CMP cara,032H  ;CARACTER 32
+        	JE SUMA
+        	CMP cara,033H      ;33
+        	JE SUMA
+        	CMP cara,034H        ;34
+        	JE SUMA
+        	SBB cara,3H
+		SUMA:
+			ADD cara,223D 
 	finswitch:
 endm
 CC macro A
