@@ -19,44 +19,34 @@ LEE macro
 		jmp leer
 endm
 
-CODIF macro
-	cifrar1 db 'cifrar $' 
-	decifrar1 db 'decifrar $'
-	lee:
-		mov al,es:[8Ah]
-		cmp al,'d'
-		je decifrar
-		cmp al,'c'
-		je cifrar
-		cmp al,'D'
-		je decifrar
-		cmp al,'C'
-		je cifrar
-		jmp fin
-	cifrar:
-		lea dx,cifrar1
-		mov ah,9h
-		int 21h
-		jmp fin
-	decifrar:
-		lea dx,decifrar1
-		mov ah,9h
-		int 21h
-		jmp fin
-
-
-CONVMAY macro A
-
-endm
-
-CONVMIN macro A
-
-endm
-
-CONVNUM macro A
-
-endm
-
-CONVESP macro A
-
+SWITCH macro
+	mov al,es:[8Ah]
+	cmp al,'d'
+	je CO1 ;Cambia Opcion a 1
+	cmp al,'D'
+	je CO1 ;Cambia Opcion a 1
+	cmp al,'c'
+	je CO2 ;cambia opcion a 2
+	cmp al,'C'
+	je CO2 ;cambia opcion a 2
+	jmp noopc
+	CO1:
+		mov opc,0
+		jmp pasosig
+	CO2:
+		mov opc,1
+	pasosig:
+	mov al,opc
+	cmp al,00h
+	je codif
+	je decodif
+	codif:	;todo el codigo para codificar
+		desp cod
+		jmp finswitch
+	decodif:	;todo el codigo para decodificar
+		desp decod
+		jmp finswitch
+	noopc:
+		desp errop
+	finswitch:
 endm
