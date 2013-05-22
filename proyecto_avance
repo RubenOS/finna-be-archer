@@ -8,11 +8,14 @@ include macro.lib
 	opc db ? ;esto funciona como una opcion para un switch 0-codifica 1-decodifica
 			;en hexadecimal!
 	errop db 'Opcion no valida$'
-	cod db 'codificando $'
-	decod db 'decodificando $'
+	numeroo db 'May/min/num/c.especiales: $'
 	origen DB 'origen.txt',0
 	HANDLE   DW ?
-	FBUFF	 DB ?                      ;ARCHIVO DE DATOS DEL BUFFER
+	FBUFF	 DB ?  ;ARCHIVO DE DATOS DEL BUFFER
+	ma db 0
+	mi db 0
+	nu db 0
+	cesp db 0
 .stack
 .code
 	inicio:
@@ -28,7 +31,18 @@ include macro.lib
 		JC FIN				;SALTA SI HUBO ERROR	
 		CALL LEEARCH		;LEE BUFF.ASM
 		CALL CIEARCH		;CIERRA BUFF.ASM
-		jmp fin
+		desp numeroo
+		cc ma
+		despc ma
+		despc 32d
+		cc mi
+		despc mi
+		despc 32d
+		cc nu
+		despc nu
+		despc 32d
+		cc cesp
+		despc cesp
 	fin:
 		mov ah,4ch
 		int 21h
@@ -55,6 +69,7 @@ include macro.lib
 		JZ EOFF
 		mov cara,dl
 		DESPC cara
+		cuenta cara
 		SWITCH
 		JMP leearch       
 		EOFF:   RET
