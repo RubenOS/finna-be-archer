@@ -3,8 +3,13 @@ include macro.lib
 .data
   nomvar db ?
 	fail1 db 'error $' 
-	win1 db 'contraseña correcta$'
+	win1 db 'contraseña correcta $'
 	CONTRA db 'PELUCAS$'
+	opc db ? ;esto funciona como una opcion para un switch 0-codifica 1-decodifica
+			;en hexadecimal!
+	errop db 'Opcion no valida$'
+	cod db 'codificando $'
+	decod db 'decodificando $'
 .stack
 .code
 	inicio:
@@ -16,6 +21,8 @@ include macro.lib
 		jmp fin
 	win:
 		desp win1
+		mov opc,1 ;prueba
+		SWITCH
 		jmp fin
 	fin:
 		mov ah,4ch
