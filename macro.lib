@@ -69,6 +69,7 @@ SWITCH macro
         	CMP cara,0FDH        ;253
         	JE RESTA
         	ADD cara,3H
+			jmp finswitch
 		RESTA:
 			SBB cara,223D   
 		jmp finswitch
@@ -80,6 +81,7 @@ SWITCH macro
         	CMP cara,034H        ;34
         	JE SUMA
         	SBB cara,3H
+			jmp finswitch
 		SUMA:
 			ADD cara,223D 
 	finswitch:
