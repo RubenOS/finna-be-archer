@@ -8,7 +8,33 @@ DESPC macro A
 	mov dl,A
 	int 21h
 endm
-
+cuenta macro A
+	mov al,A
+	cmp al,30h
+	JB CARACESP ;SI AL<30H es un c.especial
+	CMP AL, 39H
+	JA MAYUSCULAS
+	add [nu],1
+	jmp contados
+	MAYUSCULAS:
+	CMP AL, 41H ;O CMP AL, 'A'
+	JB CARACESP	;SI AL<41H FIN
+	CMP AL, 5AH ;O CMP AL,'Z'
+	JA MINUSCULAS	;SI AL>5AH
+	add [ma],1
+	jmp contados
+	MINUSCULAS:
+	CMP AL, 61H
+	JB CARACESP
+	CMP AL, 7AH
+	JA CARACESP
+	MOV AH,2H
+	add [mi],1
+	jmp contados
+	CARACESP:
+	add [cesp],1
+	contados:
+endm
 LEE macro
 	mov bl,es:[80h]
 		mov si,82h
@@ -34,11 +60,17 @@ SWITCH macro
 	je CO2 ;decodifica
 	cmp al,'C'
 	je CO2 ;decodifica
-	jmp noopc
+	jmp finswitch
 	CO1:
 		jmp finswitch
 	CO2:
-		jmp finswitch
-	noopc:
+	
 	finswitch:
+endm
+CC macro A
+	mov al,A
+	cmp al,0ah
+	sbb al,69h
+	das
+	mov A,al
 endm
