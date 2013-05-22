@@ -68,9 +68,9 @@ include macro.lib
 			CMP DL,1AH
 		JZ EOFF
 		mov cara,dl
-		DESPC cara
 		cuenta cara
 		SWITCH
+		DESPC cara
 		JMP leearch       
 		EOFF:   RET
 	LEEARCH ENDP
