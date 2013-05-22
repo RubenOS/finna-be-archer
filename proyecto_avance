@@ -1,7 +1,7 @@
 include macro.lib
 .model small 
 .data
-  nomvar db ?
+	cara db ?
 	fail1 db 'error $' 
 	win1 db 'contraseña correcta $'
 	CONTRA db 'PELUCAS$'
@@ -10,6 +10,9 @@ include macro.lib
 	errop db 'Opcion no valida$'
 	cod db 'codificando $'
 	decod db 'decodificando $'
+	origen DB 'origen.txt',0
+	HANDLE   DW ?
+	FBUFF	 DB ?                      ;ARCHIVO DE DATOS DEL BUFFER
 .stack
 .code
 	inicio:
@@ -21,10 +24,47 @@ include macro.lib
 		jmp fin
 	win:
 		desp win1
-		mov opc,1 ;prueba
-		SWITCH
+		CALL ABREARCH		;ABRE ARCHIVO BUFF.ASM
+		JC FIN				;SALTA SI HUBO ERROR	
+		CALL LEEARCH		;LEE BUFF.ASM
+		CALL CIEARCH		;CIERRA BUFF.ASM
 		jmp fin
 	fin:
 		mov ah,4ch
 		int 21h
+	
+	ABREARCH PROC
+		MOV AH,3DH		   ;ABRE ARCHIVO
+		lEA DX,origen	   ;nombre del archivo que estamos abriendo
+		MOV AL,0			   ;solo lectura
+		INT 21H
+		MOV HANDLE,AX		   ;SALVA EL ARCHIVO
+		RET			
+	ABREARCH ENDP
+	
+	LEEARCH PROC 
+		MOV AH,3FH
+		MOV BX,HANDLE
+		LEA DX,FBUFF
+			MOV CX,1
+			INT 21H
+		CMP AX,0
+		JZ EOFF
+			MOV DL,FBUFF
+			CMP DL,1AH
+		JZ EOFF
+		mov cara,dl
+		DESPC cara
+		SWITCH
+		JMP leearch       
+		EOFF:   RET
+	LEEARCH ENDP
+	
+	
+	CIEARCH PROC
+		MOV AH,3EH
+		MOV BX,HANDLE
+		INT 21H
+		RET
+	CIEARCH ENDP
 	end inicio
