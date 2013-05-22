@@ -1,85 +1,95 @@
-include macro.lib
-.model small 
-.data
-	cara db ?
-	fail1 db 'error $' 
-	win1 db 'contraseña correcta $'
-	CONTRA db 'PELUCAS$'
-	opc db ? ;esto funciona como una opcion para un switch 0-codifica 1-decodifica
-			;en hexadecimal!
-	errop db 'Opcion no valida$'
-	numeroo db 'May/min/num/c.especiales: $'
-	origen DB 'origen.txt',0
-	HANDLE   DW ?
-	FBUFF	 DB ?  ;ARCHIVO DE DATOS DEL BUFFER
-	ma db 0
-	mi db 0
-	nu db 0
-	cesp db 0
-.stack
-.code
-	inicio:
-		mov ax,@data
-		mov ds,ax
-		LEE	;llama macro para leer la contraseña que recibe como argumento
-	fail:
-		desp fail1 ;desp recibe una variable dw y la escribe en pantalla
-		jmp fin
-	win:
-		desp win1
-		CALL ABREARCH		;ABRE ARCHIVO BUFF.ASM
-		JC FIN				;SALTA SI HUBO ERROR	
-		CALL LEEARCH		;LEE BUFF.ASM
-		CALL CIEARCH		;CIERRA BUFF.ASM
-		desp numeroo
-		cc ma
-		despc ma
-		despc 32d
-		cc mi
-		despc mi
-		despc 32d
-		cc nu
-		despc nu
-		despc 32d
-		cc cesp
-		despc cesp
-	fin:
-		mov ah,4ch
-		int 21h
-	
-	ABREARCH PROC
-		MOV AH,3DH		   ;ABRE ARCHIVO
-		lEA DX,origen	   ;nombre del archivo que estamos abriendo
-		MOV AL,0			   ;solo lectura
-		INT 21H
-		MOV HANDLE,AX		   ;SALVA EL ARCHIVO
-		RET			
-	ABREARCH ENDP
-	
-	LEEARCH PROC 
-		MOV AH,3FH
-		MOV BX,HANDLE
-		LEA DX,FBUFF
-			MOV CX,1
-			INT 21H
-		CMP AX,0
-		JZ EOFF
-			MOV DL,FBUFF
-			CMP DL,1AH
-		JZ EOFF
-		mov cara,dl
-		cuenta cara
-		SWITCH
-		DESPC cara
-		JMP leearch       
-		EOFF:   RET
-	LEEARCH ENDP
-	
-	
-	CIEARCH PROC
-		MOV AH,3EH
-		MOV BX,HANDLE
-		INT 21H
-		RET
-	CIEARCH ENDP
-	end inicio
+DESP macro A
+	lea dx,A
+	mov ah,09h
+	int 21h
+endm
+DESPC macro A
+	mov ah,02h
+	mov dl,A
+	int 21h
+endm
+cuenta macro A
+	mov al,A
+	cmp al,30h
+	JB CARACESP ;SI AL<30H es un c.especial
+	CMP AL, 39H
+	JA MAYUSCULAS
+	add [nu],1
+	jmp contados
+	MAYUSCULAS:
+	CMP AL, 41H ;O CMP AL, 'A'
+	JB CARACESP	;SI AL<41H FIN
+	CMP AL, 5AH ;O CMP AL,'Z'
+	JA MINUSCULAS	;SI AL>5AH
+	add [ma],1
+	jmp contados
+	MINUSCULAS:
+	CMP AL, 61H
+	JB CARACESP
+	CMP AL, 7AH
+	JA CARACESP
+	MOV AH,2H
+	add [mi],1
+	jmp contados
+	CARACESP:
+	add [cesp],1
+	contados:
+endm
+LEE macro
+	mov bl,es:[80h]
+		mov si,82h
+		mov di,0
+	leer:
+		CMP CONTRA[di],'$'
+		JE win 
+		mov al,es:[si]
+		cmp al,CONTRA[di]
+		jne fail
+		inc si
+		inc di
+		jmp leer
+endm
+
+SWITCH macro
+	mov al,es:[8Ah]
+	cmp al,'c'
+	je CO1 ;codifica
+	cmp al,'C'
+	je CO1 ;codifica
+	cmp al,'d'
+	je CO2 ;decodifica
+	cmp al,'C'
+	je CO2 ;decodifica
+	jmp finswitch
+	CO1:
+		CMP cara,0FFH  ;CARACTER 255
+        	JE RESTA
+        	CMP cara,0FEH      ;254
+        	JE RESTA
+        	CMP cara,0FDH        ;253
+        	JE RESTA
+        	ADD cara,3H
+			jmp finswitch
+		RESTA:
+			SBB cara,223D   
+		jmp finswitch
+	CO2:
+		CMP cara,032H  ;CARACTER 32
+        	JE SUMA
+        	CMP cara,033H      ;33
+        	JE SUMA
+        	CMP cara,034H        ;34
+        	JE SUMA
+        	SBB cara,3H
+			jmp finswitch
+		SUMA:
+			ADD cara,223D 
+	finswitch:
+endm
+CC macro A
+	mov al,A
+	cmp al,0ah
+	sbb al,69h
+	das
+	mov A,al
+endm
