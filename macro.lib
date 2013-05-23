@@ -50,7 +50,7 @@ LEE macro
 		jmp leer
 endm
 
-SWITCH macro
+SWITCH macro 
 	mov al,es:[8Ah]
 	cmp al,'c'
 	je CO1 ;codifica
@@ -58,32 +58,32 @@ SWITCH macro
 	je CO1 ;codifica
 	cmp al,'d'
 	je CO2 ;decodifica
-	cmp al,'C'
+	cmp al,'D'
 	je CO2 ;decodifica
 	jmp finswitch
 	CO1:
-		CMP cara,0FFH  ;CARACTER 255
-        	JE RESTA
-        	CMP cara,0FEH      ;254
-        	JE RESTA
-        	CMP cara,0FDH        ;253
-        	JE RESTA
-        	ADD cara,3H
-			jmp finswitch
+		CMP FBUFF,0FFH  ;CARACTER 255
+        JE RESTA
+        CMP FBUFF,0FEH      ;254
+        JE RESTA
+        CMP FBUFF,0FDH        ;253
+        JE RESTA
+        ADD FBUFF,3H
+		jmp finswitch
 		RESTA:
-			SBB cara,223D   
+			SUB FBUFF,223D        
 		jmp finswitch
 	CO2:
-		CMP cara,032H  ;CARACTER 32
-        	JE SUMA
-        	CMP cara,033H      ;33
-        	JE SUMA
-        	CMP cara,034H        ;34
-        	JE SUMA
-        	SBB cara,3H
-			jmp finswitch
+		CMP FBUFF,032H  ;CARACTER 32
+        JE SUMA
+        CMP FBUFF,033H      ;33
+        JE SUMA
+        CMP FBUFF,034H        ;34
+        JE SUMA
+        SUB FBUFF,3H
+		jmp finswitch
 		SUMA:
-			ADD cara,223D 
+			ADD FBUFF,223D        
 	finswitch:
 endm
 CC macro A
@@ -92,4 +92,23 @@ CC macro A
 	sbb al,69h
 	das
 	mov A,al
+endm
+guarda macro A
+		mov 	al,A         
+        MOV     AH, 40h         ;  escribir
+        LEA     DX, fbuff2      ; Buffer de donde se toma la informaci�n
+        mov     fbuff2,al
+        MOV     BX, HANDLE2     ; Handle
+        MOV     CX, 1           ; Voy a escribir 1 caracter a la vez
+        push    ax
+        INT     21h
+        pop ax
+        ;je  sale
+        ;jmp ciclo
+        
+;sale: mov handle,ax 
+ ;     ret
+ endm
+cierarch macro
+mov handle2,ax
 endm
