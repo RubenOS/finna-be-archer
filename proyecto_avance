@@ -8,10 +8,13 @@ include macro.lib
 	opc db ? ;esto funciona como una opcion para un switch 0-codifica 1-decodifica
 			;en hexadecimal!
 	errop db 'Opcion no valida$'
-	numeroo db 'May/min/num/c.especiales: $'
+	numeroo db '     May/min/num/c.especiales (del original) ---> $'
 	origen DB 'origen.txt',0
+	destino DB 'destino.txt',0
 	HANDLE   DW ?
+	HANDLE2   DW ?
 	FBUFF	 DB ?  ;ARCHIVO DE DATOS DEL BUFFER
+	FBUFF2	 DB 80 DUP(?)
 	ma db 0
 	mi db 0
 	nu db 0
@@ -29,8 +32,12 @@ include macro.lib
 		desp win1
 		CALL ABREARCH		;ABRE ARCHIVO BUFF.ASM
 		JC FIN				;SALTA SI HUBO ERROR	
+		call CREARCH
+		mov AX, handle
 		CALL LEEARCH		;LEE BUFF.ASM
+		cierarch
 		CALL CIEARCH		;CIERRA BUFF.ASM
+		call CIEARCH2
 		desp numeroo
 		cc ma
 		despc ma
@@ -46,7 +53,7 @@ include macro.lib
 	fin:
 		mov ah,4ch
 		int 21h
-	
+
 	ABREARCH PROC
 		MOV AH,3DH		   ;ABRE ARCHIVO
 		lEA DX,origen	   ;nombre del archivo que estamos abriendo
@@ -55,8 +62,8 @@ include macro.lib
 		MOV HANDLE,AX		   ;SALVA EL ARCHIVO
 		RET			
 	ABREARCH ENDP
-	
-	LEEARCH PROC 
+
+	LEEARCH PROC
 		MOV AH,3FH
 		MOV BX,HANDLE
 		LEA DX,FBUFF
@@ -66,24 +73,45 @@ include macro.lib
 		JnZ continua1
 		ret
 		continua1:
+			cuenta FBUFF
+			SWITCH
 			MOV DL,FBUFF
 			CMP DL,1AH
 		JnZ continua2
 		ret
 		continua2:
 		mov cara,dl
-		cuenta cara
-		SWITCH
+		;cuenta FBUFF
 		DESPC cara
+		mov AX,handle2
+		guarda cara
+		mov AX,handle
 		JMP leearch       
 		RET
 	LEEARCH ENDP
 	
-	
+	CREARCH PROC
+    MOV AH,3ch;
+    LEA DX,destino
+    mov cx,0
+    INT 21H
+    MOV HANDLE2,AX
+      
+	RET
+	CREARCH ENDP
+
 	CIEARCH PROC
 		MOV AH,3EH
 		MOV BX,HANDLE
 		INT 21H
 		RET
 	CIEARCH ENDP
-	end inicio
+
+	CIEARCH2 PROC
+		MOV AH,3EH
+		MOV BX,HANDLE2
+		INT 21H
+		;JC fin
+		RET
+	CIEARCH2 ENDP	
+end inicio
